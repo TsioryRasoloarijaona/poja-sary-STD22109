@@ -49,7 +49,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Handler: com.company.base.ApiEventHandler::handleRequest
-      MemorySize: 2048
+      MemorySize: 512
       Role: !Sub '{{resolve:ssm:/poja-big-sum-std22109/${Env}/execution/role-arn}}'
       FileSystemConfigs:
         - Arn: !Sub '{{resolve:ssm:/poja-big-sum-std22109/${Env}/efs/access-point/arn}}'
@@ -67,7 +67,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Handler: com.company.base.MailboxEventHandler::handleRequest
-      MemorySize: 1024
+      MemorySize: 512
       Role: !Sub '{{resolve:ssm:/poja-big-sum-std22109/${Env}/execution/role-arn}}'
       FileSystemConfigs:
         - Arn: !Sub '{{resolve:ssm:/poja-big-sum-std22109/${Env}/efs/access-point/arn}}'
