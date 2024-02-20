@@ -1,0 +1,1 @@
+implementation group: 'org.openimaj', name: 'core-image', version: '1.3.10'
