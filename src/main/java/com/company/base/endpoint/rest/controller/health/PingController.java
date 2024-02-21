@@ -1,6 +1,8 @@
 package com.company.base.endpoint.rest.controller.health;
 
 import com.company.base.PojaGenerated;
+import com.company.base.file.BucketComponent;
+import com.company.base.file.FileHash;
 import com.company.base.repository.DummyRepository;
 import com.company.base.repository.DummyUuidRepository;
 import lombok.AllArgsConstructor;
@@ -15,6 +17,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 
 @PojaGenerated
@@ -24,7 +27,7 @@ public class PingController {
 
   DummyRepository dummyRepository;
   DummyUuidRepository dummyUuidRepository;
-
+  BucketComponent bucketComponent;
   public static final ResponseEntity<String> OK = new ResponseEntity<>("OK", HttpStatus.OK);
   public static final ResponseEntity<String> KO =
       new ResponseEntity<>("KO", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -37,6 +40,7 @@ public class PingController {
   @PostMapping(value = "/convertToBlackAndWhite", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.IMAGE_JPEG_VALUE)
   public ResponseEntity<byte[]> toBlackAndWhite(@RequestBody MultipartFile img) {
     try {
+      bucketComponent.upload(img.getResource().getFile(), "original_file");
       BufferedImage bufferedImage = ImageIO.read(new ByteArrayInputStream(img.getBytes()));
       int width = bufferedImage.getWidth();
       int height = bufferedImage.getHeight();
@@ -82,5 +86,9 @@ public class PingController {
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
+  }
+  @GetMapping("/download")
+  public File download (@RequestParam String key){
+    return bucketComponent.download(key);
   }
 }
