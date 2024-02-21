@@ -42,10 +42,7 @@ public class PingController {
       BufferedImage bufferedImage = ImageIO.read(new ByteArrayInputStream(img.getBytes()));
       int width = bufferedImage.getWidth();
       int height = bufferedImage.getHeight();
-
       BufferedImage blackAndWhiteImage = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_GRAY);
-
-
       for (int y = 0; y < height; y++) {
         for (int x = 0; x < width; x++) {
           int rgb = bufferedImage.getRGB(x, y);
@@ -57,12 +54,9 @@ public class PingController {
           blackAndWhiteImage.setRGB(x, y, newPixel);
         }
       }
-
       ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
       ImageIO.write(blackAndWhiteImage, "jpg", byteArrayOutputStream);
-
       byte[] imageData = byteArrayOutputStream.toByteArray();
-
       return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(imageData);
     } catch (IOException e) {
       throw new RuntimeException(e);
