@@ -43,7 +43,7 @@ public class PingController {
         try {
           File file = File.createTempFile("temp", null);
           img.transferTo(file);
-          bucketComponent.upload(file, img.getName());
+          bucketComponent.upload(file, img.getOriginalFilename());
         } catch (IOException e) {
           throw new RuntimeException(e);
         }
@@ -72,7 +72,7 @@ public class PingController {
         // Écrire les données du tableau d'octets dans le fichier
         fos.write(imageData);
       }
-    bucketComponent.upload(fileConverted , "fileBlackAndWhite");
+    bucketComponent.upload(fileConverted , "fileBlackAndWhite.png");
 
       return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(imageData);
     } catch (IOException e) {
