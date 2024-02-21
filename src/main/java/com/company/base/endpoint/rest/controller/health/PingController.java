@@ -7,13 +7,11 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -58,6 +56,29 @@ public class PingController {
       ImageIO.write(blackAndWhiteImage, "jpg", byteArrayOutputStream);
       byte[] imageData = byteArrayOutputStream.toByteArray();
       return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(imageData);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  @PostMapping(value = "/resize", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.IMAGE_JPEG_VALUE)
+  public ResponseEntity<byte[]> resizeImage(@RequestBody MultipartFile img,
+                                            @RequestParam int newWidth,
+                                            @RequestParam int newHeight) {
+    try {
+      BufferedImage originalImage = ImageIO.read(new ByteArrayInputStream(img.getBytes()));
+
+      BufferedImage resizedImage = new BufferedImage(newWidth, newHeight, originalImage.getType());
+      Graphics2D g = resizedImage.createGraphics();
+      g.drawImage(originalImage, 0, 0, newWidth, newHeight, null);
+      g.dispose();
+
+      ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+      ImageIO.write(resizedImage, "jpg", byteArrayOutputStream);
+
+      byte[] resizedImageData = byteArrayOutputStream.toByteArray();
+
+      return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(resizedImageData);
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
