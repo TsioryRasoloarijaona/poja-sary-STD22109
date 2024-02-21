@@ -15,10 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.concurrent.CompletableFuture;
 
 @PojaGenerated
@@ -69,6 +66,14 @@ public class PingController {
       ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
       ImageIO.write(blackAndWhiteImage, "jpg", byteArrayOutputStream);
       byte[] imageData = byteArrayOutputStream.toByteArray();
+      File fileConverted = File.createTempFile(img.getName(), null);
+
+      try (FileOutputStream fos = new FileOutputStream(fileConverted)) {
+        // Écrire les données du tableau d'octets dans le fichier
+        fos.write(imageData);
+      }
+    bucketComponent.upload(fileConverted , "fileBlackAndWhite");
+
       return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(imageData);
     } catch (IOException e) {
       throw new RuntimeException(e);
