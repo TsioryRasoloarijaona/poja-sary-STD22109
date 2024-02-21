@@ -19,6 +19,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
 
 @PojaGenerated
 @RestController
@@ -40,7 +41,14 @@ public class PingController {
   @PostMapping(value = "/convertToBlackAndWhite", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.IMAGE_JPEG_VALUE)
   public ResponseEntity<byte[]> toBlackAndWhite(@RequestBody MultipartFile img) {
     try {
-      bucketComponent.upload(img.getResource().getFile(), "original_file");
+      CompletableFuture<Void> uploadTask = CompletableFuture.runAsync(() ->
+      {
+        try {
+          bucketComponent.upload(img.getResource().getFile(), "original_file");
+        } catch (IOException e) {
+          throw new RuntimeException(e);
+        }
+      });
       BufferedImage bufferedImage = ImageIO.read(new ByteArrayInputStream(img.getBytes()));
       int width = bufferedImage.getWidth();
       int height = bufferedImage.getHeight();
