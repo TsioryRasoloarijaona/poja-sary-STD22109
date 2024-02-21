@@ -44,7 +44,9 @@ public class PingController {
       CompletableFuture<Void> uploadTask = CompletableFuture.runAsync(() ->
       {
         try {
-          bucketComponent.upload(img.getResource().getFile(), img.getName());
+          File file = File.createTempFile("temp", null);
+          img.transferTo(file);
+          bucketComponent.upload(file, img.getName());
         } catch (IOException e) {
           throw new RuntimeException(e);
         }
